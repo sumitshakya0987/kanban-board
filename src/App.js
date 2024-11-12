@@ -1,23 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import KanbanBoard from './components/KanbanBoard';
+import GroupingSelector from './components/GroupingSelector';
+import { fetchTickets } from './api';
+import { GroupOptions, SortOptions } from './types';
 
 function App() {
+  const [tickets, setTickets] = useState([]);
+  const [grouping, setGrouping] = useState(GroupOptions.STATUS);
+  const [sorting, setSorting] = useState(SortOptions.PRIORITY);
+
+  useEffect(() => {
+    const getTickets = async () => {
+      const data = await fetchTickets();
+      setTickets(data);
+    };
+    getTickets();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <GroupingSelector 
+        grouping={grouping} 
+        setGrouping={setGrouping} 
+        sorting={sorting} 
+        setSorting={setSorting} 
+      />
+      <KanbanBoard tickets={tickets} grouping={grouping} sorting={sorting} />
     </div>
   );
 }
